@@ -35,6 +35,21 @@ servers as well as Apple Silicon, 64-bit ARM boards and ARM NAS devices. Docker
 picks the right variant automatically — the command above is the same on every
 platform. 32-bit ARM (`armv7`) is not supported.
 
+## Video Playback (movi-player)
+
+This build plays video with [movi-player](https://github.com/mrujjwalg/movi-player)
+instead of the stock hls.js player. The browser opens the file itself over HTTP
+range requests and decodes it (WebCodecs, with FFmpeg in WebAssembly as the
+software path), so **nothing is transcoded for playback** and the server does no
+video work while you watch. The player comes from a fork of
+[web-ui](https://github.com/webtor-io/web-ui), pinned in the `Dockerfile`
+(`web-ui` stage); Renovate does not update it.
+
+What that asks of the browser: Chrome or Edge 110+, Safari 18+, or Firefox 130+.
+Hardware decoding of HEVC needs the browser's GPU acceleration on (on Linux, VA-API);
+without it the software path plays 1080p and may drop frames at 4K. An embed on another
+site seeks because nginx exposes `Content-Range` on `/torrent-http-proxy/`.
+
 ## Administrator Password
 
 By default the instance is open: anyone who can reach it has full access. Set a
