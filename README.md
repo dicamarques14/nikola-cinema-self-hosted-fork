@@ -43,7 +43,8 @@ range requests and decodes it (WebCodecs, with FFmpeg in WebAssembly as the
 software path), so **nothing is transcoded for playback** and the server does no
 video work while you watch. The player comes from a fork of
 [web-ui](https://github.com/webtor-io/web-ui), pinned in the `Dockerfile`
-(`web-ui` stage); Renovate does not update it.
+(`web-ui` stage), by tag and not by digest: a build takes the current `movi-player` image,
+and `docker build --pull` fetches a newer one.
 
 What that asks of the browser: Chrome or Edge 110+, Safari 18+, or Firefox 130+.
 Hardware decoding of HEVC needs the browser's GPU acceleration on (on Linux, VA-API);
@@ -133,6 +134,11 @@ CLEANER_KEEP_FREE=25%
 - `CLEANER_KEEP_FREE` sets the threshold at which cleaning starts.
 
 Both variables can be defined as percentages or as byte values (e.g., `10G` or `100M`).
+
+- **USE_CLEANER** - run the autocleaner (default: true). `USE_CLEANER=false` turns it off for good: the
+  download cache in `/data` is never cleaned and grows until the disk is full, so watch the free space
+  yourself. Library entries whose cache was cleaned and whose swarm is gone stay listed but cannot be opened;
+  saving a torrent to Vault (see [Configuring Vault](#configuring-vault)) keeps it regardless of the cleaner.
 
 ## Configuring Database
 

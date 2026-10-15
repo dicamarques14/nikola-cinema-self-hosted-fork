@@ -3,6 +3,9 @@ name: Docker Image CI
 on:
   workflow_dispatch:
   push:
+    branches:
+      # Publishes ghcr.io/<owner>/<repo>:movi-player (the metadata action's branch tag).
+      - 'movi-player'
     tags:
       - 'v*'
 

@@ -23,10 +23,9 @@ FROM ghcr.io/webtor-io/rest-api:main@sha256:9daacb9a2a0cbb47298051a520b5c61a60a1
 # NOT webtor's web-ui: the fork whose player is movi-player (the browser opens
 # the file itself and decodes it, nothing is transcoded for playback). Built and
 # published by that repo's Actions on every push to its `movi-player` branch.
-# Pinned by tag only until the first build exists: after it, add
-# `@sha256:<digest>` (docker buildx imagetools inspect <image>) like the others.
-# Renovate does not watch it (renovate.json matches ghcr.io/webtor-io/**), so
-# bumps are manual.
+# Deliberately NOT pinned by digest, unlike every other stage: a build takes
+# whatever the `movi-player` tag points at. A cached layer is reused until
+# `docker build --pull` (or a cache-less build) fetches the tag again.
 FROM ghcr.io/dicamarques14/webtor-web-ui:movi-player AS web-ui
 FROM ghcr.io/webtor-io/nginx-vod:main@sha256:539a64ad02c0520e585e161b4ff37ad97d399ce274798eaf1a5b24aaa6c8e008 AS nginx-vod
 FROM ghcr.io/webtor-io/vault:main@sha256:9eeafa430d1df73ddd1f9460f3c34ed46d909df19c413a473a2dfefc0dfc88f1 AS vault

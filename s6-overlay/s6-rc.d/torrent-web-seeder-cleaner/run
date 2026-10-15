@@ -2,4 +2,18 @@
 set -a
 source /etc/webtor/common.env
 set +a
+
+log() {
+  echo "$1" | s6-log p"[torrent-web-seeder-cleaner]" 1
+}
+
+# Any case: `USE_CLEANER=FALSE` in a compose file is as common as `false`.
+case "$(printf '%s' "${USE_CLEANER:-true}" | tr 'A-Z' 'a-z')" in
+false|0|no|off)
+  log "USE_CLEANER=$USE_CLEANER -- not starting the cleaner; /data is never cleaned and grows until the disk is full"
+  # s6 restarts a longrun that exits, so idle rather than exiting.
+  exec sleep infinity
+  ;;
+esac
+
 /app/torrent-web-seeder-cleaner s 2>&1 | s6-log p"[torrent-web-seeder-cleaner]" 1
