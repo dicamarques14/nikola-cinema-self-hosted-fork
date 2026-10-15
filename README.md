@@ -213,6 +213,7 @@ variables:
 - **AWS_POSTER_CACHE_BUCKET** - bucket for the poster cache (default: posters)
 - **AWS_USER_SUBTITLE_BUCKET** - bucket for user-uploaded subtitles (default: subtitles)
 - **AWS_THUMBNAIL_BUCKET** - bucket for thumbnails (default: thumbnails)
+- **TORRENT_STORE_AWS_BUCKET** - bucket for the torrent metadata (`.torrent` files) behind your library (default: torrent-store); without it a library entry stops opening an hour after it was added
 
 To use an external S3 instead of the built-in store, set `USE_LOCALS3=false`,
 `AWS_ENDPOINT` and the credentials; the bucket variables above still apply —

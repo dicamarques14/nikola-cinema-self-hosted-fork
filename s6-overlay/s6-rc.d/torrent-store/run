@@ -1,6 +1,16 @@
 #!/command/with-contenv sh
 set -a
 source /etc/webtor/common.env
+source /etc/webtor/secrets/s3.env
 GRPC_PORT=$TORRENT_STORE_SERVICE_PORT
+# The torrent metadata (.torrent files) a library entry points at is kept
+# here. Without the S3 store it lives in a Badger database under /tmp that
+# expires after one hour (BADGER_EXPIRE=3600) and is not on any volume: an
+# hour after you add a torrent its entry stays in the library, but opening it
+# says the resource is not available, and a recreated container forgets all of
+# them. The embedded S3 (/storage, a volume) keeps them permanently; Badger
+# stays in front of it as a cache.
+USE_S3=true
+AWS_BUCKET=$TORRENT_STORE_AWS_BUCKET
 set +a
-/app/torrent-store serve 2>&1 | s6-log p"[torrent-http-proxy]" 1
+/app/torrent-store serve 2>&1 | s6-log p"[torrent-store]" 1
