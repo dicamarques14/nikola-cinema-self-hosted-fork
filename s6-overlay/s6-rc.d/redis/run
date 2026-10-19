@@ -2,4 +2,21 @@
 set -a
 source /etc/webtor/common.env
 set +a
-redis-server --port $REDIS_MASTER_SERVICE_PORT 2>&1 | s6-log p"[redis]" 1
+
+# Redis keeps the web sessions (handlers/session in web-ui), so it has to
+# outlive the container: without a data directory every restart and every
+# recreate signed every device out -- a car's browser asked for the password
+# again after each image update. The append-only file sits on the data
+# volume, under a name torrent-web-seeder-cleaner never touches: it only
+# drops entries named by a 40-hex infohash (upstream "Drop only what is
+# named by a hash", in the pinned digest), so $DATA_DIR/.webtor is safe from
+# the sweep.
+#
+# Everything else web-ui keeps here (job logs, rate-limit buckets, caches)
+# carries its own expiry, so persisting it changes nothing but its survival.
+dir="$DATA_DIR/.webtor/redis"
+mkdir -p "$dir"
+redis-server --port $REDIS_MASTER_SERVICE_PORT \
+  --dir "$dir" \
+  --appendonly yes \
+  --appendfsync everysec 2>&1 | s6-log p"[redis]" 1

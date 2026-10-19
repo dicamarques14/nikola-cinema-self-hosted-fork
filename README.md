@@ -80,6 +80,23 @@ is redirected to `/login` instead of getting read access. Set
 pages stay reachable without logging in, and only actions that were already
 password-gated (e.g. changing settings) still prompt for one.
 
+### Staying signed in, and signing in from your phone
+
+A sign-in lasts `SESSION_MAX_AGE` seconds (default 2592000, 30 days) and is
+extended to the full value at most once a day while you use it, so a device
+you use regularly is not asked again. Sessions and the key that signs them are
+kept on the data volume (`/data/.webtor/redis`, `/data/.webtor/secrets`), so
+restarting or recreating the container — an image update — no longer signs
+everyone out. Keep `-v data:/data` on your `docker run`.
+
+Next to the password form, `/login` shows a QR code and a short code. Scan it
+with a phone that is already signed in (or open `/login/approve` there and
+type the code), check the code matches the screen, and approve: the waiting
+browser — a car's or a TV's, where typing a password is a chore — signs
+itself in within a couple of seconds. A request expires after five minutes
+and works once. The QR code points at the address the waiting browser used;
+behind a TLS-terminating proxy, have it send `X-Forwarded-Proto`.
+
 Embedding is handled separately, because a third-party `<iframe>` has no
 session with your instance — redirecting it to a login form would only render
 a broken player. Which sites may embed is decided by the embed domain list on
