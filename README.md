@@ -379,9 +379,10 @@ which half is missing.
 Some addons answer with a plain HTTP(S) link (`url`, no `infoHash`), often with
 `behaviorHints.proxyHeaders`. Discover plays these too: the click streams the file
 through web-ui (Range requests, the addon's headers added server-side, the link never
-shown to the browser), while the whole file is downloaded and turned into a private
-torrent. When that finishes the page switches to the normal player, with subtitles,
-library, Vault and resume, at the same position. Only mp4/mkv-style files for now;
+shown to the browser). Nothing is downloaded beyond what you watch unless you press
+**Import to Webtor** on the player page: then the whole file is downloaded and turned
+into a private torrent, and when that finishes the page switches to the normal player,
+with subtitles, library, Vault and resume, at the same position. Only mp4/mkv-style files for now;
 HLS/DASH rows stay greyed out ("Not supported yet").
 
 - **URL_STREAMS_ENABLED** - play such streams (default: true)
@@ -390,8 +391,10 @@ HLS/DASH rows stay greyed out ("Not supported yet").
   evicted first (default: 50 GiB). A torrent whose staged file was evicted is fetched
   from the addon again when needed; Vault keeps it for good.
 - **URL_IMPORT_CONCURRENCY** - imports at once (default: 2)
+- **URL_IMPORT_AUTO** - start the import as soon as a stream is opened, without the
+  button (default: false)
 
-Each file is downloaded twice while it is being watched before the import finishes
+An imported file is downloaded twice while it is being watched before the import finishes
 (once by the player, once by the import), and the origin's bandwidth is the instance's:
 on a shared instance every signed-in user can make it fetch from any public host their addons name.
 
