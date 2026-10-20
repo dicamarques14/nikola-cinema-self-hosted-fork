@@ -345,7 +345,8 @@ uploaded by you, or found through OpenSubtitles when that is configured
 (see above). A film is translated progressively while you watch, the finished
 translation is stored in the embedded S3, so any later viewing of the same
 file and language is served from cache and costs nothing. The cache is kept
-per model, so after a change of key or model a file is translated anew.
+per model: a new model, or a switch to the other key (whose default model
+differs), translates a file again; a new value of the same key keeps the cache.
 
 - **SUBTITLE_TRANSLATE_ENABLED** - offer AI subtitle tracks (default: false)
 - **SUBTITLE_TRANSLATE_MODEL** - model id (default: the selected backend's default)
