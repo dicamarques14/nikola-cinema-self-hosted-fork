@@ -10,7 +10,7 @@ log() {
 
 # OpenSubtitles follows the enrichment-provider contract (README,
 # "Configuring content enrichment"): a provider key alone enables the
-# feature, no separate switch -- unlike the Anthropic key there is no
+# feature, no separate switch -- unlike the AI keys there is no
 # per-call bill to guard, quota exhaustion just stops the lookups.
 # rest-api mirrors this gate: without the key it omits the subtitles leg
 # from exports, so nothing ever calls a sleeping service.
