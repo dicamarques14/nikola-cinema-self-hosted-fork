@@ -12,7 +12,7 @@ This is the self-hosted version of [webtor.io](https://webtor.io), implemented a
 - **Download Entire Torrent as a ZIP Archive:** Download your torrent as a ZIP archive on-the-fly while preserving the original directory structure, without requiring a torrent client.
 - **Personal Library:** Organize your own collection by adding torrents to your account. Movies and series will be detected automatically!
 - **Subtitles from OpenSubtitles:** Matching subtitle tracks are found and offered in the player automatically (needs a free OpenSubtitles API key, see "Configuring OpenSubtitles").
-- **AI subtitles:** Translate subtitle tracks -- embedded, uploaded or found on OpenSubtitles -- into your language on the fly, right in the player (needs an Anthropic API key, see "Configuring AI features").
+- **AI subtitles:** Translate subtitle tracks -- embedded, uploaded or found on OpenSubtitles -- into your language on the fly, right in the player (needs an AI API key, see "Configuring AI features").
 - **Stremio integration** Just install the addon using the link from profile and start watching your library on TV with Stremio.
 - **Developer-friendly** With the [SDK](https://github.com/webtor-io/embed-sdk-js) you can provide your users with the ability to watch torrent-videos online on your website.
 
@@ -297,34 +297,44 @@ looked up once does not spend the key's quota again.
 
 ## Configuring AI features
 
-The features below are off by default and all need **ANTHROPIC_API_KEY**;
-setting the key alone enables nothing. Calls are billed to that key, which is
-why each has its own switch and its own quota.
+The features below are off by default. Each needs its own switch and an API
+key for one of the two AI backends this image supports; setting a key alone
+enables nothing. Calls are billed to that key, which is why each feature has
+its own switch and recommendations have their own quota.
 
-- **ANTHROPIC_API_KEY** - key for the Anthropic API (default: unset, which
-  disables all features below regardless of their switches)
+- **ANTHROPIC_API_KEY** - API key for the backend of the same name (default: unset)
+- **OPENAI_API_KEY** - API key for the backend of the same name (default: unset)
+- **OPENAI_BASE_URL** - API endpoint used with `OPENAI_API_KEY` (default: that
+  backend's public endpoint)
+
+One key serves all three features. With both set, `ANTHROPIC_API_KEY` is used
+and `OPENAI_API_KEY` is ignored; a failing call never switches to the other
+key. With neither set, every feature below is off whatever its switch says.
+Each `*_MODEL` variable defaults to a model of the backend the key selects.
+Model ids are not interchangeable between backends, so when you switch keys,
+also clear any model id you set yourself.
 
 AI enrichment is a fallback for the providers above: when TMDB, OMDB and
-KinoPoisk all fail to recognise a release name, Claude is asked to normalise
-it into title/year candidates, which are then searched again through those
-same providers. It never supplies metadata itself.
+KinoPoisk all fail to recognise a release name, the model is asked to
+normalise it into title/year candidates, which are then searched again through
+those same providers. It never supplies metadata itself.
 
 - **AI_ENRICH_ENABLED** - enable that fallback (default: false)
-- **AI_ENRICH_MODEL** - model id (default: claude-haiku-4-5-20251001)
+- **AI_ENRICH_MODEL** - model id (default: the selected backend's default)
 - **AI_ENRICH_TIMEOUT_SECONDS** - timeout for one call (default: 30)
 - **AI_ENRICH_MAX_CANDIDATES** - how many candidates to ask for (default: 3)
 
 AI recommendations is the "describe what you want to watch" box on Discover.
-With it off, the section is not rendered at all.
+With it off, or with no key, the section is not rendered at all.
 
 - **AI_RECOMMENDATIONS_ENABLED** - enable the Discover section (default: false)
 - **AI_RECOMMENDATIONS_MODEL** - model id, used for both tiers unless overridden
-  (default: claude-haiku-4-5-20251001)
+  (default: the selected backend's default)
 - **AI_RECOMMENDATIONS_FREE_DAILY_QUOTA** - requests per day for a free account
   (default: 100 in this image; upstream web-ui defaults to 1). Without a claims
   provider every account is free-tier, so this is the quota everyone gets here;
   the default matches the paid cap and only serves as a backstop against a
-  runaway client loop burning your Anthropic bill
+  runaway client loop burning your API bill
 - **AI_RECOMMENDATIONS_PAID_DAILY_QUOTA** - requests per day for a paid account
   (default: 100). No account is paid without a claims provider, so this has no
   effect in this image
@@ -334,12 +344,14 @@ subtitle picker. It translates the film's subtitle tracks -- embedded,
 uploaded by you, or found through OpenSubtitles when that is configured
 (see above). A film is translated progressively while you watch, the finished
 translation is stored in the embedded S3, so any later viewing of the same
-file and language is served from cache and costs nothing.
+file and language is served from cache and costs nothing. The cache is kept
+per model: a new model, or a switch to the other key (whose default model
+differs), translates a file again; a new value of the same key keeps the cache.
 
 - **SUBTITLE_TRANSLATE_ENABLED** - offer AI subtitle tracks (default: false)
-- **SUBTITLE_TRANSLATE_MODEL** - model id (default: claude-haiku-4-5-20251001)
+- **SUBTITLE_TRANSLATE_MODEL** - model id (default: the selected backend's default)
 
-With the switch on but no key, or the key set but the switch off, the track
+With the switch on but no key, or a key set but the switch off, the track
 is not offered and the `subtitle-translate` service explains in `docker logs`
 which half is missing.
 
