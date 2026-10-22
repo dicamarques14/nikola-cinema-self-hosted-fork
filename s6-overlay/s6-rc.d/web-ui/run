@@ -33,6 +33,14 @@ if [ "${SUBTITLE_TRANSLATE_ENABLED:-false}" = "true" ] && [ -n "${ANTHROPIC_API_
 else
   SUBTITLE_TRANSLATE_ENABLED=false
 fi
+# Torznab indexers (Jackett, Prowlarr) on a self-hosted box live on the same
+# LAN or Docker network, which web-ui's egress guard refuses by default --
+# that guard exists for the shared webtor.io deployment. Allow private
+# addresses unless the operator explicitly sets it to false, and lift the
+# free-tier indexer cap: there is no claims provider in this image, so every
+# viewer is free-tier and the cap would apply to the only user there is.
+TORZNAB_ALLOW_PRIVATE_NETWORK=${TORZNAB_ALLOW_PRIVATE_NETWORK:-true}
+TORZNAB_MAX_INDEXERS=${TORZNAB_MAX_INDEXERS:-0}
 # Jellyfin library (/jellyfin pages): both come straight from the container
 # environment (with-contenv) and are deliberately not written to
 # common.env or any file, so the API key never lands on disk. Empty
