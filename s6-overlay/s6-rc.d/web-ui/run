@@ -32,5 +32,11 @@ if [ "${SUBTITLE_TRANSLATE_ENABLED:-false}" = "true" ] && [ -n "${ANTHROPIC_API_
 else
   SUBTITLE_TRANSLATE_ENABLED=false
 fi
+# Jellyfin library (/jellyfin pages): both come straight from the container
+# environment (with-contenv) and are deliberately not written to
+# common.env or any file, so the API key never lands on disk. Empty
+# JELLYFIN_URL makes web-ui skip the routes.
+JELLYFIN_URL=${JELLYFIN_URL:-}
+JELLYFIN_API_KEY=${JELLYFIN_API_KEY:-}
 set +a
 cd /app/web-ui && ./web-ui serve 2>&1 | s6-log p"[web-ui]" 1
