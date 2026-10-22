@@ -20,11 +20,12 @@ if [ "${USE_VAULT:-true}" = "false" ]; then
   VAULT_SERVICE_HOST=
 fi
 # AI subtitles follow the AI-features contract (README, "Configuring AI
-# features"): the switch alone enables nothing without ANTHROPIC_API_KEY,
-# and the key alone enables nothing without the switch. Resolve the pair
-# here so a half-configured one cannot leave the UI offering tracks
-# against a subtitle-translate that idles.
-if [ "${SUBTITLE_TRANSLATE_ENABLED:-false}" = "true" ] && [ -n "${ANTHROPIC_API_KEY:-}" ]; then
+# features"): the switch alone enables nothing without an AI key
+# (ANTHROPIC_API_KEY or OPENAI_API_KEY), and a key alone enables nothing
+# without the switch. Resolve the pair here, with the same test as
+# subtitle-translate's run script, so a half-configured one cannot leave the
+# UI offering tracks against a subtitle-translate that idles.
+if [ "${SUBTITLE_TRANSLATE_ENABLED:-false}" = "true" ] && [ -n "${ANTHROPIC_API_KEY:-}${OPENAI_API_KEY:-}" ]; then
   SUBTITLE_TRANSLATE_ENABLED=true
   # No claims provider in this image, every viewer is free-tier: without
   # this the track would render locked behind a paid-tier CTA for everyone.

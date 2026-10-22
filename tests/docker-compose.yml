@@ -12,6 +12,10 @@ services:
       # rest-api builds export urls from DOMAIN, and the scenarios fetch those
       # urls from the host, so this must name the published host port.
       DOMAIN: http://localhost:${WEBTOR_HOST_PORT:-8080}
+      # The switch without an AI key, on purpose: 98-ai-keys.sh checks that
+      # this half-configured pair stays off. Nothing else here changes with
+      # it, since without a key web-ui sees the feature off either way.
+      SUBTITLE_TRANSLATE_ENABLED: "true"
     ports:
       - "${WEBTOR_HOST_PORT:-8080}:8080"
     volumes:

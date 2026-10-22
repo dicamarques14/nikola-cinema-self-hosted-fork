@@ -7,19 +7,19 @@ ARG S6_VERBOSITY=1
 # Nothing is compiled here any more. The Alpine base below and its apk
 # packages are NOT pinned to a digest and will float to whatever `apk add`
 # resolves at build time.
-FROM ghcr.io/webtor-io/torrent-store:master@sha256:e24879dbe0b2eeec56c32dac0334bcc48f78dd069c945e91b1039147e1a94c25 AS torrent-store
-FROM ghcr.io/webtor-io/magnet2torrent:master@sha256:074b84edb49cb584062ff551f316fb4cc1a74df6ac11cefdbfed7ee2a90d438c AS magnet2torrent
+FROM ghcr.io/webtor-io/torrent-store:master@sha256:d0ef32515426b511b1326a03dc941ce16463e3d1713b607694f02e7ff7b9e67c AS torrent-store
+FROM ghcr.io/webtor-io/magnet2torrent:master@sha256:589fc38eca16a279f9c51c5567bae02c42f852b6f8f2a53b238c2bada91d3af4 AS magnet2torrent
 FROM ghcr.io/webtor-io/external-proxy:master@sha256:7eea435d26f281b717a393e1958d8b01d5378b3470922c20195625d210913e55 AS external-proxy
 FROM ghcr.io/webtor-io/torrent-web-seeder:master@sha256:08c961f706e7a5725189d3bbf97a74100091fc691f0e5b5fd6c11734eed71866 AS torrent-web-seeder
 FROM ghcr.io/webtor-io/torrent-web-seeder-cleaner:main@sha256:767e017b2adc53c07ebc65f4073cb6341fd460a1c688105edcc3a615e000a8c1 AS torrent-web-seeder-cleaner
 FROM ghcr.io/webtor-io/content-transcoder:master@sha256:6e68e3d750458addfd030c4a40a195ba763f392a735f6809bf78949d3f54e3ac AS content-transcoder
-FROM ghcr.io/webtor-io/content-prober:master@sha256:92f61276cd28b97bbd5a8fed49763ee2475019a172d27b0e1491dde2e8c4741b AS content-prober
-FROM ghcr.io/webtor-io/torrent-archiver:master@sha256:6dcc4b3be2ed49d96268d8ee1723364f736c15cdf71be5657777b14d2348fa78 AS torrent-archiver
+FROM ghcr.io/webtor-io/content-prober:master@sha256:82df69a08cff5ecb191fa1b59f0cb8178c968e81070f974eebf18f56825b1225 AS content-prober
+FROM ghcr.io/webtor-io/torrent-archiver:master@sha256:b788486fd5c011e13599ce74dda8a9aa02e5a99f47ea191a80df84206bd79d27 AS torrent-archiver
 FROM ghcr.io/webtor-io/srt2vtt:master@sha256:abe7faa9b2332e4dead34333d3053a12d86bd5c473264da9c52f140f3c730057 AS srt2vtt
 FROM ghcr.io/webtor-io/subtitle-translate:master@sha256:c2d709692e1cc8d912ba68fb1b78ca17672f27f57abfd23cbaff9f06253413b4 AS subtitle-translate
-FROM ghcr.io/webtor-io/video-info:master@sha256:48631174b0a13adce1031968064d1b6b1c7e007a1ca2e3cd8f5bc1e79a3da9b8 AS video-info
-FROM ghcr.io/webtor-io/torrent-http-proxy:master@sha256:6b7d3cd89bb24477db20ee98f0061b6696a0d3e74c888b3eac9c94129d077ce5 AS torrent-http-proxy
-FROM ghcr.io/webtor-io/rest-api:main@sha256:9daacb9a2a0cbb47298051a520b5c61a60a1b069b58e00ef0b8b5e6e848c82a2 AS rest-api
+FROM ghcr.io/webtor-io/video-info:master@sha256:66cef3cfe61a9ae2ebec2d6f8f54d5dc9d3bbb06251b4737fac17b39dc8435c7 AS video-info
+FROM ghcr.io/webtor-io/torrent-http-proxy:master@sha256:b634e9235f57ce1483ed5d71987ba1af8cb29b5e16644982fc6e07d05a93143b AS torrent-http-proxy
+FROM ghcr.io/webtor-io/rest-api:main@sha256:4e5f282de24789f49a17586ec23bc930bad79f36c3bed08528c2bb470c06b722 AS rest-api
 # NOT webtor's web-ui: the fork whose player is movi-player (the browser opens
 # the file itself and decodes it, nothing is transcoded for playback). Built and
 # published by that repo's Actions on every push to its `movi-player` branch.

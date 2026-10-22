@@ -9,20 +9,21 @@ log() {
 }
 
 # AI subtitles follow the AI-features contract of this image (see README,
-# "Configuring AI features"): ANTHROPIC_API_KEY alone enables nothing, and
-# the switch alone enables nothing -- calls are billed to the key, so
-# billing is opt-in. Explain which half is missing rather than just idling.
+# "Configuring AI features"): an AI key alone enables nothing, and the
+# switch alone enables nothing -- calls are billed to the key, so billing
+# is opt-in. Either key subtitle-translate reads will do; when both are set
+# it picks one itself. Explain which half is missing rather than just idling.
 if [ "${SUBTITLE_TRANSLATE_ENABLED:-false}" != "true" ]; then
   log "AI subtitles are off (default) -- not starting subtitle-translate."
-  log "Set SUBTITLE_TRANSLATE_ENABLED=true and ANTHROPIC_API_KEY to offer"
-  log "AI-translated subtitle tracks in the player."
+  log "Set SUBTITLE_TRANSLATE_ENABLED=true and ANTHROPIC_API_KEY or"
+  log "OPENAI_API_KEY to offer AI-translated subtitle tracks in the player."
   # s6 restarts a longrun that exits, so idle rather than exiting.
   exec sleep infinity
 fi
-if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
-  log "SUBTITLE_TRANSLATE_ENABLED=true but ANTHROPIC_API_KEY is not set --"
-  log "not starting subtitle-translate; the player will not offer AI"
-  log "subtitle tracks. Pass -e ANTHROPIC_API_KEY=... to enable them."
+if [ -z "${ANTHROPIC_API_KEY:-}${OPENAI_API_KEY:-}" ]; then
+  log "SUBTITLE_TRANSLATE_ENABLED=true but neither ANTHROPIC_API_KEY nor"
+  log "OPENAI_API_KEY is set -- not starting subtitle-translate; the player"
+  log "will not offer AI subtitle tracks. Pass either with -e to enable them."
   exec sleep infinity
 fi
 
